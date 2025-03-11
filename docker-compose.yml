@@ -28,6 +28,16 @@ services:
     networks:
       - springfield_network
 
+  app:
+    build: .
+    container_name: app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - springfield_network
+
 networks:
   springfield_network:
     driver: bridge
