@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class CidadeSpringfieldApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(CidadeSpringfieldApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(CidadeSpringfieldApplication.class, args);
+    }
 }
