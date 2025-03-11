@@ -26,9 +26,9 @@ public class UsuarioController {
     public ResponseEntity<String> trocarSenha(@RequestBody TrocarSenhaRequest request) {
         try {
             authService.trocarSenha(request.getId(), request.getNovaSenha());
-            return ResponseEntity.ok("Senha alterada com sucesso!");
+            return ResponseEntity.ok("Senha alterada com sucesso.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao trocar a senha: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao alterar a senha.");
         }
     }
 
