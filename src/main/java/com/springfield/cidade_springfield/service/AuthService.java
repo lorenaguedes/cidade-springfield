@@ -3,18 +3,16 @@ package com.springfield.cidade_springfield.service;
 import com.springfield.cidade_springfield.model.Usuario;
 import com.springfield.cidade_springfield.repository.CidadaoRepository;
 import com.springfield.cidade_springfield.repository.UsuarioRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import java.util.Collections;
-import java.util.List;
 
-import java.util.Date;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -24,7 +22,15 @@ public class AuthService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private CidadaoRepository cidadaoRepository; // Repositório de cidadãos para verificar se o cidadão existe
+    private CidadaoRepository cidadaoRepository;
+
+    private final Counter totalUsuarios;
+
+    public AuthService(MeterRegistry meterRegistry) {
+        this.totalUsuarios = Counter.builder("usuarios_total")
+                .description("Número total de usuários cadastrados")
+                .register(meterRegistry);
+    }
 
     @Transactional
     public boolean cadastrarUsuario(Integer idCidadao, String username, String senha) {
@@ -50,6 +56,7 @@ public class AuthService {
         usuario.setUltimoLogin(LocalDateTime.now());
 
         usuarioRepository.saveAndFlush(usuario);
+        totalUsuarios.increment();
         return true;
     }
 
@@ -80,33 +87,27 @@ public class AuthService {
     }
 
     public boolean trocarSenha(Integer id, String novaSenha) {
-        if (id == null || novaSenha == null || novaSenha.isEmpty()) {
-            return false;
-        }
-    
+        if (id == null || novaSenha == null || novaSenha.isEmpty()) return false;
+
         Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
-        if (!usuarioOpt.isPresent()) {
-            return false;
-        }
-    
+        if (!usuarioOpt.isPresent()) return false;
+
         Usuario usuario = usuarioOpt.get();
         usuario.setSenha(novaSenha);
         usuarioRepository.save(usuario);
-    
+
         return true;
     }
 
     public void bloquearUsuario(Integer id) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
-        usuarioOpt.ifPresent(usuario -> {
+        usuarioRepository.findById(id).ifPresent(usuario -> {
             usuario.setBloqueado(true);
             usuarioRepository.save(usuario);
         });
     }
 
     public void desbloquearUsuario(Integer id) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findById(id);
-        usuarioOpt.ifPresent(usuario -> {
+        usuarioRepository.findById(id).ifPresent(usuario -> {
             usuario.setBloqueado(false);
             usuarioRepository.save(usuario);
         });
