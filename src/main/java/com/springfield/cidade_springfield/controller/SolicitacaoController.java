@@ -1,9 +1,9 @@
 package com.springfield.cidade_springfield.controller;
 
-import com.springfield.cidade_springfield.enums.EventoSolicitacao;
+import com.springfield.cidade_springfield.dto.ProcessarSolicitacaoRequest;
+import com.springfield.cidade_springfield.enums.EstadoSolicitacao;
 import com.springfield.cidade_springfield.model.HistoricoSolicitacao;
 import com.springfield.cidade_springfield.service.SolicitacaoService;
-import com.springfield.cidade_springfield.enums.EstadoSolicitacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +18,8 @@ public class SolicitacaoController {
     private SolicitacaoService solicitacaoService;
 
     @PostMapping("/processar")
-    public ResponseEntity<String> processarEvento(
-        @RequestParam Integer idCidadao,
-        @RequestParam EventoSolicitacao evento,
-        @RequestParam String descricao
-    ) {
-        EstadoSolicitacao novoEstado = solicitacaoService.processarEvento(idCidadao, evento, descricao);
+    public ResponseEntity<String> processarEvento(@RequestBody ProcessarSolicitacaoRequest req) {
+        EstadoSolicitacao novoEstado = solicitacaoService.processarEvento(req.getIdCidadao(), req.getEvento(), req.getDescricao());
         return ResponseEntity.ok("Novo estado: " + novoEstado);
     }
 

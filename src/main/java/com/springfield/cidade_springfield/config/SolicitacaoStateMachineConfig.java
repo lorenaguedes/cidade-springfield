@@ -4,12 +4,13 @@ import com.springfield.cidade_springfield.enums.EstadoSolicitacao;
 import com.springfield.cidade_springfield.enums.EventoSolicitacao;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachine;
+import org.springframework.statemachine.config.EnableStateMachineFactory;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
 
 @Configuration
-@EnableStateMachine
+@EnableStateMachineFactory
 public class SolicitacaoStateMachineConfig extends StateMachineConfigurerAdapter<EstadoSolicitacao, EventoSolicitacao> {
 
     @Override
